@@ -92,8 +92,18 @@ function handleClickNewCatForm(event) {
     }
 }
 //Adicionar nuevo gatito
+
+//Nos quedamos en el punto 4.
 function addNewKitten(event) {
     event.preventDefault();
+    const newKittenDataObject = {
+        image:inputphoto.value,
+        name:inputName.value,
+        desc: inputDesc.value,
+        race: inputRace.value,
+
+      
+      };
     const valueDesc = inputDesc.value;
     const valuePhoto = inputPhoto.value;
     const valueName = inputName.value;
