@@ -19,17 +19,30 @@ const input_search_race = document.querySelector('.js_in_search_race');
 const GITHUB_USER = 'BarbaraBravoRedondo';
 const SERVER_URL = `https://dev.adalab.es/api/kittens/${GITHUB_USER}`;
 
+const kittenListStored = JSON.parse(localStorage.getItem('kittensList'));
+
 let kittenDataList = [];
 
 //Funciones
 
-fetch(SERVER_URL)
-  .then((response) => response.json())
-  .then((data) => {
-    kittenDataList = data.results;
-    renderKittenList(kittenDataList);
-    console.log(kittenDataList);
-  });
+function kittenStored() {
+  if (kittenListStored) {
+    renderKittenList(kittenListStored);
+  } else {
+    fetch(SERVER_URL)
+      .then((response) => response.json())
+      .then((data) => {
+        kittenDataList = data.results;
+        renderKittenList(kittenDataList);
+        localStorage.setItem('kittensList', JSON.stringify(kittenDataList));
+        console.log(kittenDataList);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+}
+kittenStored();
 
 function renderKitten(kittenData) {
   let html = '';
@@ -98,13 +111,27 @@ function addNewKitten(event) {
     labelMessageError.innerHTML = '¡Uy! parece que has olvidado algo';
   } else if (valueDesc !== '' && valuePhoto !== '' && valueName !== '') {
     labelMessageError.innerHTML = 'Mola! Un nuevo gatito en Adalab!';
-    kittenDataList.push(newKittenDataObject);
+
+    fetch(`https://dev.adalab.es/api/kittens/${GITHUB_USER}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newKittenDataObject),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          kittenDataList.push(newKittenDataObject);
+          localStorage.setItem('kittensList', JSON.stringify(kittenDataList));
+          inputPhoto.value = '';
+          inputName.value = '';
+          inputDesc.value = '';
+          inputRace.value = '';
+          renderKittenList(kittenDataList);
+        } else {
+          labelMessageError.innerHTML = 'No se pudo añadir tu gatito =(';
+        }
+      });
   }
-  inputPhoto.value = '';
-  inputName.value = '';
-  inputDesc.value = '';
-  inputRace.value = '';
-  renderKittenList(kittenDataList);
 }
 //Cancelar la búsqueda de un gatito
 function cancelNewKitten(event) {
