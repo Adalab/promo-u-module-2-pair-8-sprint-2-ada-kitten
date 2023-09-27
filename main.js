@@ -52,20 +52,29 @@ function renderKitten(kittenData) {
     html = kittenData.race;
   }
 
-  const kitten = `<li class="card">
-    <article>
-      <img
-        class="card_img"
-        src=${kittenData.image}
-        alt="gatito"
-      />
-      <h3 class="card_title">${kittenData.name}</h3>
-      <h3 class="card_race">${html}</h3>
-      <p class="card_description">
-      ${kittenData.desc}
-      </p>
-    </article>
-    </li>`;
+  const kitten = document.createElement('li');
+  kitten.classList.add('card');
+  const article = document.createElement('article');
+  kitten.appendChild(article);
+  const img = document.createElement('img');
+  img.classList.add('card_img');
+  img.src = kittenData.image;
+  img.alt = 'gatito';
+  article.appendChild(img);
+  const cardName = document.createElement('h3');
+  cardName.classList.add('card_title');
+  cardName.textContent = kittenData.name;
+  article.appendChild(cardName);
+  const cardRace = document.createElement('h3');
+  cardRace.classList.add('card_race');
+  const catRace = document.createTextNode(html);
+  cardRace.appendChild(catRace);
+  article.appendChild(cardRace);
+  const desc = document.createElement('p');
+  desc.classList.add('card_description');
+  desc.textContent = kittenData.desc;
+  article.appendChild(desc);
+
   return kitten;
 }
 
@@ -73,7 +82,7 @@ function renderKittenList(kittenDataList) {
   listElement.innerHTML = '';
 
   for (const kittenItem of kittenDataList) {
-    listElement.innerHTML += renderKitten(kittenItem);
+    listElement.appendChild(renderKitten(kittenItem));
   }
 }
 
